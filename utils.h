@@ -4,6 +4,7 @@
 #include <ctime>
 #include <functional>
 #include <limits>
+#include <sstream>
 
 inline long long timer(std::function<void()> func) {
     auto start = std::chrono::high_resolution_clock::now();
@@ -51,4 +52,22 @@ long long minArray(long long array[], int n) {
             res = array[i];
 
     return res;
+}
+
+const char* formatNumberForDisplay(int n) {
+    if (n == 10000000)
+        return "10M";
+    else if (n == 1000000)
+        return "1M";
+    else if (n == 100000)
+        return "100K";
+    else
+        return "N/A";
+}
+
+const char* longToString(long num) {
+    std::stringstream ss;
+    ss.imbue(std::locale(""));
+    ss << num;
+    return ss.str().c_str();
 }

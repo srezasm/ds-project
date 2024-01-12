@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include "utils.h"
+#include <string>
 
 struct LinkedList {
     float value;
@@ -26,28 +27,33 @@ void init(int n, LinkedList*& list) {
 LinkedList* init(int n) {
     LinkedList* list;
     auto duration = timer([&]() { init(n, list); });
-    printf("Initiated %d item LinkedList in %lld microseconds.\n", n, duration);
+    printf("Initiated %s item LinkedList in %s μs.\n", formatNumberForDisplay(n), longToString(duration));
     return list;
 }
 
 // --------- Sort ---------
-LinkedList* merge(LinkedList* l1, LinkedList* l2) {
-    if (l1 == NULL)
-        return l2;
-    if (l2 == NULL)
-        return l1;
+void merge(LinkedList** listRef1, LinkedList** listRef2) {
+    LinkedList* result = nullptr;
+    LinkedList** lastPtrRef = &result;
 
-    LinkedList* result;
-
-    if (l1->value <= l2->value) {
-        result = l1;
-        result->next = merge(l1->next, l2);
-    } else {
-        result = l2;
-        result->next = merge(l1, l2->next);
+    while (*listRef1 && *listRef2) {
+        if ((*listRef1)->value <= (*listRef2)->value) {
+            *lastPtrRef = *listRef1;
+            *listRef1 = (*listRef1)->next;
+        } else {
+            *lastPtrRef = *listRef2;
+            *listRef2 = (*listRef2)->next;
+        }
+        lastPtrRef = &((*lastPtrRef)->next);
     }
 
-    return result;
+    if (*listRef1) {
+        *lastPtrRef = *listRef1;
+    } else {
+        *lastPtrRef = *listRef2;
+    }
+
+    *listRef1 = result;
 }
 
 void mergeSort(LinkedList** listRef) {
@@ -71,19 +77,22 @@ void mergeSort(LinkedList** listRef) {
     }
 
     // split the list
+    LinkedList* left = list;
+    LinkedList* right = slow->next;
     slow->next = NULL;
 
     // list is the head of the left part
-    mergeSort(&list);
+    mergeSort(&left);
     // slow.next is the head of the right part
-    mergeSort(&slow->next);
+    mergeSort(&right);
 
-    *listRef = merge(list, slow->next);
+    merge(&left, &right);
+    *listRef = left;
 }
 
 void runMergeSort(LinkedList** listRef) {
     auto duration = timer([&]() { mergeSort(listRef); });
-    printf("\nSorted in %lld microseconds.\n", duration);
+    printf("Sorted in %s μs.\n", longToString(duration));
 }
 
 int main() {
@@ -91,22 +100,10 @@ int main() {
 
     printf("----- Testing LinkedLists -----\n");
 
-    // for (int n = 100'000; n <= 10'000'000; n *= 10) {
-    //     LinkedList* arr = init(n);
-    //     printf("------------------------\n");
-    // }
-
-    LinkedList* list = init(4);
-    // printf("\nlist values\n");
-    // while (arr != NULL) {
-    //     printf("%f ", arr->value);
-    //     arr = arr->next;
-    // }
-    runMergeSort(&list);
-    printf("\nmerged\n");
-    while (list != NULL) {
-        printf("%f ", list->value);
-        list = list->next;
+    for (int n = 100'000; n <= 10'000'000; n *= 10) {
+        LinkedList* list = init(n);
+        runMergeSort(&list);
+        printf("------------------------\n");
     }
 
     return 0;

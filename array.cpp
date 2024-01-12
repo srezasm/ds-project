@@ -17,7 +17,8 @@ float* init(int n) {
 
     auto duration = timer([&]() { randomFloatArray(arr, n); });
 
-    printf("Initiated array[%d] in %lld microseconds.\n", n, duration);
+    printf("Initiated %s item array in %s μs.\n", formatNumberForDisplay(n),
+           longToString(duration));
 
     return arr;
 }
@@ -83,7 +84,7 @@ void mergeSort(float arr[], int l, int r) {
 
 void mergeSort(float arr[], int n) {
     auto duration = timer([&]() { mergeSort(arr, 0, n - 1); });
-    printf("Sorted in %lld microseconds.\n", duration);
+    printf("Sorted in %s μs.\n", longToString(duration));
 }
 
 // --------- Search ---------
@@ -118,10 +119,10 @@ void binarySearch(float arr[], int n) {
         absentRecords[i] = duration;
     }
 
-    printf("Searched 100 present values in min: %lld, mean: %f, max: %lld microseconds\n",
+    printf("Searched 100 present values in min: %lld, mean: %f, max: %lld μs\n",
            minArray(presentRecords, 100), meanArray(presentRecords, 100),
            maxArray(presentRecords, 100));
-    printf("Searched 100 absent values in min: %lld, mean: %f, max: %lld microseconds\n",
+    printf("Searched 100 absent values in min: %lld, mean: %f, max: %lld μs\n",
            minArray(absentRecords, 100), meanArray(absentRecords, 100),
            maxArray(absentRecords, 100));
 }
