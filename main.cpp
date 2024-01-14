@@ -3,9 +3,10 @@
 #include <iostream>
 #include <random>
 
-#include "utils.h"
-#include "array.cpp"
+#include "array.h"
+#include "bst.cpp"
 #include "linkedList.cpp"
+#include "utils.h"
 
 using namespace std;
 
@@ -89,8 +90,49 @@ void testLinkedList() {
 
 // --------- BST ---------
 
-void testBST() {
+void testInitBST(int n, TreeNode** nodeRef) {
+    auto duration = timer([&]() { initBST(n, nodeRef); });
 
+    cout << "Initiated " << formatNumberForDisplay(n) << " item BinaryTree in "
+         << longToString(duration) << " μs." << endl;
+}
+
+void testBSTSearch(int n, TreeNode* root) {
+    long long presentRecords[100];
+    long long absentRecords[100];
+
+    for (int i = 0; i < 100; i++) {
+        float rndFloat = randomFloat();
+        int rndIdx = randomInt(n);
+        long long duration = 0;
+
+        duration = timer([&]() { bstSearch(root, root->val); });
+        presentRecords[i] = duration;
+
+        duration = timer([&]() { bstSearch(root, rndFloat); });
+        absentRecords[i] = duration;
+    }
+
+    cout << "Searched 100 present values in min: " << minArray(presentRecords, 100)
+         << ", mean: " << meanArray(presentRecords, 100)
+         << ", max: " << maxArray(presentRecords, 100) << " μs" << endl;
+    cout << "Searched 100 absent values in min: " << minArray(absentRecords, 100)
+         << ", mean: " << meanArray(absentRecords, 100) << ", max: " << maxArray(absentRecords, 100)
+         << " μs" << endl;
+}
+
+int testBST() {
+    cout << "----- Testing Arrays -----" << endl;
+
+    for (int n = 100'000; n <= 10'000'000; n *= 10) {
+        TreeNode* root;
+        testInitBST(n, &root);
+        testBSTSearch(n, root);
+
+        cout << "------------------------" << endl;
+    }
+
+    return 0;
 }
 
 // --------- Menu ---------

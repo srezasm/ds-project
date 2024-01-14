@@ -1,7 +1,5 @@
-#include <iostream>
-
-#include "array.cpp"
 #include "utils.h"
+#include "array.h"
 
 using namespace std;
 
@@ -35,16 +33,14 @@ void initBST(int n, TreeNode** nodeRef) {
     fillBST(nodeRef, rndArr, 0, n - 1);
 }
 
-void testInitBST(int n, TreeNode** nodeRef) {
-    auto duration = timer([&]() { initBST(n, nodeRef); });
-
-    cout << "Initiated " << formatNumberForDisplay(n) << " item BinaryTree in "
-         << longToString(duration) << " μs." << endl;
-}
-
-int main() {
-    TreeNode* root;
-    testInitBST(8, &root);
-
-    return 0;
+// --------- Search ---------
+bool bstSearch(TreeNode* node, float val) {
+    if (node == nullptr)
+        return false;
+    else if (node->val == val)
+        return true;
+    else if (node->val > val)
+        return bstSearch(node->left, val);
+    else
+        return bstSearch(node->right, val);
 }

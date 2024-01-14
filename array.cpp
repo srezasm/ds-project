@@ -8,7 +8,7 @@ void genRndFloatArray(float* array, int n) {
 }
 
 // --------- Sort ---------
-void arrayMerge(float arr[], int p, int q, int r) {
+void arrayMerge(float* arr, int p, int q, int r) {
     long i, j, k;
     long nL = q - p + 1;  // length of A[p:q]
     long nR = r - q;      // length of A[q + 1:r]
@@ -53,7 +53,7 @@ void arrayMerge(float arr[], int p, int q, int r) {
     delete[] R;
 }
 
-void arrayMergeSort(float arr[], int l, int r) {
+void arrayMergeSort(float* arr, int l, int r) {
     if (l >= r)
         return;
 
@@ -67,7 +67,7 @@ void arrayMergeSort(float arr[], int l, int r) {
 }
 
 // --------- Search ---------
-int arrayBinarySearch(float arr[], int l, int r, float x) {
+int arrayBinarySearch(float* arr, int l, int r, float x) {
     if (r < l)
         return -1;
 

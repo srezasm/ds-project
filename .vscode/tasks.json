@@ -9,6 +9,7 @@
                 "-g",
                 "${file}",
                 "utils.cpp",
+                "array.cpp",
                 "-o",
                 "${fileDirname}/${fileBasenameNoExtension}.out"
             ],
