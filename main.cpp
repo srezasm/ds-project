@@ -8,6 +8,7 @@
 #include "bst.cpp"
 #include "linkedList.cpp"
 #include "list.cpp"
+#include "skipList.cpp"
 #include "utils.h"
 
 using namespace std;
@@ -206,16 +207,52 @@ void testList() {
     }
 }
 
+// --------- Skip List ---------
+void testInitSkipList(int n, SkipList** listRef) {
+    auto duration = timer([&]() { initSkipList(n, listRef); });
+
+    cout << "Initiated " << formatNumberForDisplay(n) << " item SkipList in "
+         << longToString(duration) << " μs." << endl;
+}
+
+void testSearchSkipList(SkipList* sList) {
+    long long absentRecords[100];
+
+    for (int i = 0; i < 100; i++) {
+        float rndFloat = randomFloat();
+        long long duration = 0;
+
+        duration = timer([&]() { searchSkipList(rndFloat, sList); });
+        absentRecords[i] = duration;
+    }
+    cout << "Searched 100 random values in min: " << minArray(absentRecords, 100)
+         << ", mean: " << meanArray(absentRecords, 100) << ", max: " << maxArray(absentRecords, 100)
+         << " μs" << endl;
+}
+
+void testSkipList() {
+    cout << "----- Testing SkipLists -----" << endl;
+
+    for (int n = 100'000; n <= 10'000'000; n *= 10) {
+        SkipList* sList;
+        testInitSkipList(n, &sList);
+        testSearchSkipList(sList);
+
+        cout << "------------------------" << endl;
+    }
+}
+
 // --------- Menu ---------
 void displayMenu() {
-    std::cout << "----- Test Menu -----" << std::endl;
-    std::cout << "1. Test Arrays" << std::endl;
-    std::cout << "2. Test Linked Lists" << std::endl;
-    std::cout << "3. Test BST" << std::endl;
-    std::cout << "4. std::list" << std::endl;
-    std::cout << "0. Exit" << std::endl;
-    std::cout << "---------------------" << std::endl;
-    std::cout << "Enter your choice: ";
+    cout << "----- Test Menu -----" << endl;
+    cout << "1. Test Arrays" << endl;
+    cout << "2. Test Linked Lists" << endl;
+    cout << "3. Test BST" << endl;
+    cout << "4. list" << endl;
+    cout << "5. Skip List" << endl;
+    cout << "0. Exit" << endl;
+    cout << "---------------------" << endl;
+    cout << "Enter your choice: ";
 }
 
 int main() {
@@ -224,7 +261,7 @@ int main() {
     int choice;
     do {
         displayMenu();
-        std::cin >> choice;
+        cin >> choice;
 
         switch (choice) {
             case 1:
@@ -239,15 +276,18 @@ int main() {
             case 4:
                 testList();
                 break;
+            case 5:
+                testSkipList();
+                break;
             case 0:
-                std::cout << "Exiting..." << std::endl;
+                cout << "Exiting..." << endl;
                 break;
             default:
-                std::cout << "Invalid choice. Please try again." << std::endl;
+                cout << "Invalid choice. Please try again." << endl;
                 break;
         }
 
-        std::cout << std::endl;
+        cout << endl;
     } while (choice != 0);
 
     return 0;

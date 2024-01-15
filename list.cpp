@@ -68,6 +68,10 @@ void listMergeSort(list<float>* lst, int l, int r) {
     listMerge(lst, l, m, r);       // merge the two sorted subarrays
 }
 
+void stdSearch() {
+    
+}
+
 // --------- Search ---------
 bool listSearch(list<float>* lst, float val) {
     return binary_search(lst->begin(), lst->end(), val);
