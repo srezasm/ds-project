@@ -1,4 +1,5 @@
 #include <time.h>
+#include <algorithm>
 #include <array>
 #include <iostream>
 #include <list>
@@ -7,7 +8,6 @@
 #include "array.h"
 #include "bst.cpp"
 #include "linkedList.cpp"
-#include "list.cpp"
 #include "skipList.cpp"
 #include "utils.h"
 
@@ -57,9 +57,9 @@ void testArray() {
     for (int n = 100'000; n <= 10'000'000; n *= 10) {
         float* arr = new float[n];
         initArray(n, arr);
-
         testArrayMergeSort(arr, n);
         testArrayBinarySearch(arr, n);
+        cout << "Total memory occupied in bytes: " << sizeof(float) * n << endl;
 
         cout << "------------------------" << endl;
 
@@ -87,6 +87,8 @@ void testLinkedList() {
         LinkedList* list;
         testInitLinkedList(n, &list);
         testLinkedListMergeSort(&list);
+        cout << "Total memory occupied in bytes: " << sizeof(*list) * n << endl;
+        
         cout << "------------------------" << endl;
     }
 }
@@ -96,7 +98,7 @@ void testLinkedList() {
 void testInitBST(int n, TreeNode** nodeRef) {
     auto duration = timer([&]() { initBST(n, nodeRef); });
 
-    cout << "Initiated " << formatNumberForDisplay(n) << " item BinaryTree in "
+    cout << "Initiated " << formatNumberForDisplay(n) << " item BST in "
          << longToString(duration) << " μs." << endl;
 }
 
@@ -125,12 +127,13 @@ void testBSTSearch(int n, TreeNode* root) {
 }
 
 int testBST() {
-    cout << "----- Testing Arrays -----" << endl;
+    cout << "----- Testing BST -----" << endl;
 
     for (int n = 100'000; n <= 10'000'000; n *= 10) {
         TreeNode* root;
         testInitBST(n, &root);
         testBSTSearch(n, root);
+        cout << "Total memory occupied in bytes: " << sizeof(*root) * n << endl;
 
         cout << "------------------------" << endl;
     }
@@ -139,27 +142,24 @@ int testBST() {
 }
 
 // --------- std:list ---------
-void testInitList(int n, list<float>** lst) {
+void initList(int n, list<float>* lst) {
+    for (int i = 0; i < n; i++)
+        lst->push_back(randomFloat());
+}
+
+void testInitList(int n, list<float>* lst) {
     auto duration = timer([&]() { initList(n, lst); });
 
     cout << "Initiated " << formatNumberForDisplay(n) << " item list in " << longToString(duration)
          << " μs." << endl;
 }
 
-void testListMergeSort(list<float>* lst) {
-    long long duration = 0;
-
-    duration = timer([&]() { listMergeSort(lst, 0, lst->size()); });
-
-    cout << "Custom merge-sort in " << longToString(duration) << " μs." << endl;
-}
-
-void testListDefaultSort(list<float>* lst) {
+void testListSort(list<float>* lst) {
     long long duration = 0;
 
     duration = timer([&]() { lst->sort(); });
 
-    cout << "Default sort in " << longToString(duration) << " μs." << endl;
+    cout << "Sorted in " << longToString(duration) << " μs." << endl;
 }
 
 void testListSearch(list<float>* lst) {
@@ -174,7 +174,7 @@ void testListSearch(list<float>* lst) {
 
         long long duration = 0;
 
-        duration = timer([&]() { listSearch(lst, *it); });
+        duration = timer([&]() { find(lst->begin(), lst->end(), *it); });
         presentRecords[i] = duration;
     }
     cout << "Searched 100 present values in min: " << minArray(presentRecords, 100)
@@ -185,7 +185,7 @@ void testListSearch(list<float>* lst) {
         float rndFloat = randomFloat();
         long long duration = 0;
 
-        duration = timer([&]() { listSearch(lst, rndFloat); });
+        duration = timer([&]() { find(lst->begin(), lst->end(), rndFloat); });
         absentRecords[i] = duration;
     }
     cout << "Searched 100 absent values in min: " << minArray(absentRecords, 100)
@@ -194,14 +194,14 @@ void testListSearch(list<float>* lst) {
 }
 
 void testList() {
-    cout << "----- Testing Lists -----" << endl;
+    cout << "----- Testing std::list -----" << endl;
 
     for (int n = 100'000; n <= 10'000'000; n *= 10) {
         list<float>* lst = new list<float>();
-        testInitList(n, &lst);
-        testListDefaultSort(lst);
-        testListMergeSort(lst);
+        testInitList(n, lst);
+        testListSort(lst);
         testListSearch(lst);
+        cout << "Total memory occupied in bytes: " << sizeof(*lst) * n << endl;
 
         cout << "------------------------" << endl;
     }
@@ -237,6 +237,7 @@ void testSkipList() {
         SkipList* sList;
         testInitSkipList(n, &sList);
         testSearchSkipList(sList);
+        cout << "Total memory occupied in bytes: " << sizeof(*sList) * n << endl;
 
         cout << "------------------------" << endl;
     }
